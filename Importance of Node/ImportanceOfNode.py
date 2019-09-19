@@ -84,22 +84,55 @@ def get_minimumDistance(A_matrix, index):
     return minimumDistance
 
 
+# 获取平均支持率
+def get_supportRate(f_matrix):
+    sum_supportRate = 0
+    supportRate = [0 for i in range(len(A_matrix))]
+
+    for i in range(0, len(f_matrix)):
+        for j in range(i+1, len(f_matrix)):
+            sum_supportRate += f_matrix[i][j]
+
+    num = (1+len(f_matrix)-1)*(len(f_matrix)-1)/2
+    average_supportRate = sum_supportRate/num
+    for i in range(len(f_matrix)):
+        count = 0
+        for j in range(len(f_matrix)):
+            if(f_matrix[i][j]>average_supportRate):
+                count += 1
+        supportRate[i] = count/len(supportRate)
+
+    return supportRate
+
+
 # 程序入口
 if __name__ == '__main__':
+
     G = nx.Graph()                                          # 定义图
     theta = 0.6                                             # 定义θ
     H_matrix = zeros((8, 8), dtype=float)                   # 创建一个8x8的全零矩阵，数据类型为float型
     f_matrix = zeros((8, 8), dtype=float)                   # 创建一个8x8的全零矩阵，数据类型为float型
     d_matrix = zeros((8, 8), dtype=int)                     # 创建一个8x8的全零矩阵，数据类型为int型
+    P = [0 for i in range(len(A_matrix))]
+    C = [0 for i in range(len(A_matrix))]
+
     readNetwork("sf100.data")                               # 从数据文件中读取邻接矩阵
+    # print(A_matrix)
     betweenessCentrality()                                  # 求解介数中心数
     for i in range(0, len(d_matrix)):                       # 计算任意两点最短距离
         d_matrix[i] = get_minimumDistance(A_matrix, i)
+    # print(d_matrix)
     for i in range(0, len(A_matrix)):
         for j in range(0, len(A_matrix)):
-            H_matrix[i][j] = isomorphism(i,j, 0.6)
-            # f_matrix[i][j] = H_matrix[i][j]/math.pow(d_matrix[i][j], 2)
-    print('H\n', H_matrix)
-    # print(f_matrix)
-    # print(d_matrix)
-    # print(A_matrix)
+            H_matrix[i][j] = isomorphism(i,j, 0.6)          # 计算同构体
+            if i != j:                                      # 根据f(i,j)的计算公式，分母d不为0
+                f_matrix[i][j] = H_matrix[i][j]/math.pow(d_matrix[i][j], 2)
+    # print('H(i,j)\n', H_matrix)
+    # print('\n')
+    # print('f(i,j)\n', f_matrix)
+    P = get_supportRate(f_matrix)         # 获取支持率
+    # print(P)
+    for i in range(0,len(C)):
+        C[i] = math.pow(e, P[i])
+
+    # print(C)
