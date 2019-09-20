@@ -3,8 +3,8 @@ from numpy import *
 import math
 
 
-global A_matrix                                         # 定义全局变量
-A_matrix = zeros((8, 8), dtype=int)                     # 创建一个8x8的全零矩阵，数据类型为int型
+global A_matrix                                             # 定义全局变量
+A_matrix = zeros((8, 8), dtype=int)                         # 创建一个8x8的全零矩阵，数据类型为int型
 
 
 # 从文件@filename中读取网络的adjacentMatrix，通过networkx的add_edges方法向对象G中添加边
@@ -31,21 +31,21 @@ def get_minimumDistance(A_matrix, index):
                 if (minimumDistance[i] == 0) or (minimumDistance[i] > s):
                     minimumDistance[i] = s                  # 更新最短距离
                     q.insert(0, i)                          # 将前驱节点插入队列首位
-
         minimumDistance[index] = 0                          # 自己到达自己置0
     return minimumDistance
 
 
 # 计算同构体
 def isomorphism(i, j, theta):
+    numerator = denominator0 = denominator1 = 0              # 初始化
     for k in range(0, A_matrix.shape[0]):
-        numerator = A_matrix[i][k] * A_matrix[j][k]         # 计算分子
+        numerator += A_matrix[i][k] * A_matrix[j][k]         # 计算分子
     numerator += 1
     for k in range(0, A_matrix.shape[0]):
-        denominator0 = math.pow(A_matrix[i][k], 2)          # 计算分母
+        denominator0 += math.pow(A_matrix[i][k], 2)          # 计算分母0
     denominator0 += 1
     for k in range(0, A_matrix.shape[0]):
-        denominator1 = math.pow(A_matrix[j][k], 2)          # 计算分母
+        denominator1 += math.pow(A_matrix[j][k], 2)          # 计算分母1
     denominator1 += 1
     denominator = math.pow(denominator0*denominator1, theta/2)
     result = numerator/denominator                          # 同构体结果
@@ -114,4 +114,3 @@ if __name__ == '__main__':
         I[i] = C[i]*sum[i]                                  # 计算节点重要性
     # print(sum)
     print(I)
-
